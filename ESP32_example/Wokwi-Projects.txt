@@ -1,0 +1,5 @@
+Wokwi - ESP32 - projektek
+https://wokwi.com/projects/479698924483877889 - 1example Toogle LED
+https://wokwi.com/projects/479699628289300481 - 2example ISR
+https://wokwi.com/projects/479700528773045249 - 3example Paralell Tasks
+https://wokwi.com/projects/479700781118241793 - 4example WiFi
