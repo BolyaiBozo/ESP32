@@ -1,0 +1,407 @@
+[
+    {
+        "id": "4aee0c3687dc8430",
+        "type": "serial in",
+        "z": "6d8fb87f7851dc10",
+        "name": "esp32-5ex",
+        "serial": "0ecec6cbf08594ae",
+        "x": 140,
+        "y": 600,
+        "wires": [
+            [
+                "8f233e417ca2bcbd"
+            ]
+        ]
+    },
+    {
+        "id": "f83809bbc6025638",
+        "type": "debug",
+        "z": "6d8fb87f7851dc10",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "3e421a9ca435a358",
+        "type": "serial out",
+        "z": "6d8fb87f7851dc10",
+        "name": "esp32-5ex",
+        "serial": "0ecec6cbf08594ae",
+        "x": 430,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "7b29826fafb26a7d",
+        "type": "inject",
+        "z": "6d8fb87f7851dc10",
+        "name": "on",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"out\":\"on\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 820,
+        "wires": [
+            [
+                "3e421a9ca435a358"
+            ]
+        ]
+    },
+    {
+        "id": "24e4646234fd8c7b",
+        "type": "inject",
+        "z": "6d8fb87f7851dc10",
+        "name": "off",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"out\":\"off\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 860,
+        "wires": [
+            [
+                "3e421a9ca435a358"
+            ]
+        ]
+    },
+    {
+        "id": "ff8cb4fef07af088",
+        "type": "ui_text",
+        "z": "6d8fb87f7851dc10",
+        "group": "95be6959db4ad495",
+        "order": 1,
+        "width": "3",
+        "height": "1",
+        "name": "temp.",
+        "label": "",
+        "format": "<i class=\"fa fa-thermometer-3\">{{msg.payload}}°C</i>",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 510,
+        "y": 600,
+        "wires": [],
+        "icon": "font-awesome/fa-thermometer-3"
+    },
+    {
+        "id": "e256fdc4308109ee",
+        "type": "ui_text",
+        "z": "6d8fb87f7851dc10",
+        "group": "95be6959db4ad495",
+        "order": 2,
+        "width": "3",
+        "height": "1",
+        "name": "hum.",
+        "label": "",
+        "format": "<i class=\"fa fa-tint\"></i>{{msg.payload}}%",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 510,
+        "y": 640,
+        "wires": [],
+        "icon": "font-awesome/fa-tint"
+    },
+    {
+        "id": "8f233e417ca2bcbd",
+        "type": "function",
+        "z": "6d8fb87f7851dc10",
+        "name": "parse ",
+        "func": "// Tisztítjuk a sorvégi \\r\\n karaktereket\nlet raw = String(msg.payload).trim();\n\n// Csak a kapcsos zárójellel kezdődő JSON sorokkal foglalkozunk\nif (!raw.startsWith(\"{\")) {\n    return null; // Nem JSON sor (pl. boot üzenet) eldobása\n}\n\ntry {\n    // Szövegből valódi JSON (JS) objektum készítése\n    let data = JSON.parse(raw);\n    msg.payload = data;\n    return msg;\n} catch (e) {\n    node.warn(\"Hibás JSON érkezett: \" + raw);\n    return null;\n}",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 600,
+        "wires": [
+            [
+                "bd964d9a3489bbd9",
+                "f83809bbc6025638",
+                "0e6378b6e267ab99",
+                "3e1b83f7e8177865"
+            ]
+        ]
+    },
+    {
+        "id": "bd964d9a3489bbd9",
+        "type": "function",
+        "z": "6d8fb87f7851dc10",
+        "name": "hum.",
+        "func": "let input = msg.payload.humidity;\nmsg.topic = \"hum.\";\nmsg.payload=input;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 640,
+        "wires": [
+            [
+                "e256fdc4308109ee",
+                "134998e85b777ec6"
+            ]
+        ]
+    },
+    {
+        "id": "3e1b83f7e8177865",
+        "type": "function",
+        "z": "6d8fb87f7851dc10",
+        "name": "temp.",
+        "func": "let input = msg.payload.temperature;\nmsg.topic=\"temp.\";\nmsg.payload=input;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 600,
+        "wires": [
+            [
+                "ff8cb4fef07af088",
+                "134998e85b777ec6"
+            ]
+        ]
+    },
+    {
+        "id": "6989a1c7c188a82a",
+        "type": "ui_text",
+        "z": "6d8fb87f7851dc10",
+        "group": "95be6959db4ad495",
+        "order": 4,
+        "width": "1",
+        "height": "1",
+        "name": "led",
+        "label": "",
+        "format": "<font color=\"{{(msg.payload?\"yellow\":\"gray\")}}\"><i class=\"fa fa-lightbulb-o fa-2x\"></i></font>",
+        "layout": "row-spread",
+        "className": "",
+        "style": false,
+        "font": "",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 510,
+        "y": 680,
+        "wires": [],
+        "icon": "font-awesome/fa-lightbulb-o"
+    },
+    {
+        "id": "0e6378b6e267ab99",
+        "type": "function",
+        "z": "6d8fb87f7851dc10",
+        "name": "led",
+        "func": "let input = msg.payload.led_state;\nif(input === \"on\") {\n   msg.payload=true;\n} else {\n    msg.payload=false;\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 680,
+        "wires": [
+            [
+                "6989a1c7c188a82a"
+            ]
+        ]
+    },
+    {
+        "id": "0df270474b0b6277",
+        "type": "ui_switch",
+        "z": "6d8fb87f7851dc10",
+        "name": "",
+        "label": "Out LED",
+        "tooltip": "",
+        "group": "95be6959db4ad495",
+        "order": 3,
+        "width": "4",
+        "height": "1",
+        "passthru": true,
+        "decouple": "false",
+        "topic": "topic",
+        "topicType": "msg",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 140,
+        "y": 780,
+        "wires": [
+            [
+                "74d5f64359020343"
+            ]
+        ]
+    },
+    {
+        "id": "74d5f64359020343",
+        "type": "function",
+        "z": "6d8fb87f7851dc10",
+        "name": "mk Out",
+        "func": "let input=msg.payload;\nif(input) {\n    msg.payload='{\"out\":\"on\"}';\n} else {\n    msg.payload = '{\"out\":\"off\"}';\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 780,
+        "wires": [
+            [
+                "3e421a9ca435a358"
+            ]
+        ]
+    },
+    {
+        "id": "4a5eb4208f19cbcc",
+        "type": "comment",
+        "z": "6d8fb87f7851dc10",
+        "name": "ESP32-5Example",
+        "info": "",
+        "x": 130,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "134998e85b777ec6",
+        "type": "ui_chart",
+        "z": "6d8fb87f7851dc10",
+        "name": "trend",
+        "group": "95be6959db4ad495",
+        "order": 4,
+        "width": "6",
+        "height": "2",
+        "label": "",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 510,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0ecec6cbf08594ae",
+        "type": "serial-port",
+        "name": "",
+        "serialport": "/dev/ttyUSB0",
+        "serialbaud": "115200",
+        "databits": 8,
+        "parity": "none",
+        "stopbits": 1,
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": 10000
+    },
+    {
+        "id": "95be6959db4ad495",
+        "type": "ui_group",
+        "name": "ESP32-5Example",
+        "tab": "188ace0555ccf325",
+        "order": 1,
+        "disp": true,
+        "width": 6,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "188ace0555ccf325",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "580ea7e8ab31107b",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-node-serialport": "2.0.3",
+            "node-red-dashboard": "3.6.6"
+        }
+    }
+]
